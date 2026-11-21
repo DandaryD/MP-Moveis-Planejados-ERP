@@ -1,0 +1,48 @@
+{
+  "name": "mp-moveis-planejados-erp",
+  "version": "1.0.0",
+  "description": "ERP Hibrido para Moveis Planejados",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DandaryD/MP-Moveis-Planejados-ERP.git"
+  },
+  "keywords": [],
+  "author": "DandaryD",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DandaryD/MP-Moveis-Planejados-ERP/issues"
+  },
+  "homepage": "https://github.com/DandaryD/MP-Moveis-Planejados-ERP#readme",
+  "devDependencies": {
+    "electron": "^45.3.0",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "br.com.dandary.mp",
+    "productName": "MP - Moveis Planejados",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "oneClick:": "false",
+      "allowToChangeInstallationDirectory:": "true"
+    }
+  }
+}
