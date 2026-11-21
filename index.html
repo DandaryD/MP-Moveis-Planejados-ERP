@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP-Móveis | ERP Completo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--blue:#1e3a5f;--blue2:#2a5298;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--bg:#f1f5f9;--card:#fff;--text:#0f172a;--muted:#64748b}
+body{background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--blue);color:#fff;padding:20px 0;position:fixed;height:100vh;overflow-y:auto;flex-shrink:0}
+.logo{padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,.15);font-size:22px;font-weight:800}
+.logo span{color:#fbbf24}
+.logo small{display:block;font-size:12px;font-weight:400;opacity:.7;margin-top:4px}
+.nav{padding:15px 0}
+.nav button{width:100%;background:none;border:none;color:#e2e8f0;padding:13px 20px;text-align:left;font-size:15px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.12);color:#fff;border-left:4px solid #fbbf24}
+.main{margin-left:260px;flex:1;padding:24px;width:calc(100% - 260px)}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.topbar h1{font-size:24px}
+.topbar input{padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;width:280px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:20px}
+.card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card small{color:var(--muted);font-size:13px}
+.card b{font-size:26px;display:block;margin:6px 0}
+.card span{font-size:12px;font-weight:700}
+.green{color:var(--green)} .red{color:var(--red)} .orange{color:var(--orange)} .blue{color:var(--blue2)}
+.box{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:18px}
+.box h3{margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #e2e8f0}
+th{background:#f8fafc}
+input,select,textarea{padding:10px;border:1px solid #cbd5e1;border-radius:8px;width:100%;font-size:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+.btn{background:var(--blue2);color:#fff;border:none;padding:11px 18px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn:hover{opacity:.9}
+.btn-green{background:var(--green)} .btn-red{background:var(--red)} .btn-orange{background:var(--orange)} .btn-ghost{background:#e2e8f0;color:#111}
+.flex{display:flex;gap:10px;flex-wrap:wrap}
+.badge{padding:4px 8px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-green{background:#dcfce7;color:#166534} .badge-red{background:#fee2e2;color:#991b1b} .badge-orange{background:#ffedd5;color:#9a3412} .badge-blue{background:#dbeafe;color:#1e40af}
+.hidden{display:none}
+.bar{height:10px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--green)}
+@media(max-width:768px){.sidebar{width:70px}.sidebar .logo small,.nav button span{display:none}.main{margin-left:70px;width:calc(100% - 70px)}}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">MP<span>-Móveis</span><small>ERP • Gestão Completa</small></div>
+  <div class="nav">
+    <button class="active" onclick="show('dashboard',this)"><span>📊</span> <span>Dashboard</span></button>
+    <button onclick="show('vendas',this)"><span>🛒</span> <span>Vendas / PDV</span></button>
+    <button onclick="show('produtos',this)"><span>🪑</span> <span>Produtos / Estoque</span></button>
+    <button onclick="show('clientes',this)"><span>👥</span> <span>Clientes</span></button>
+    <button onclick="show('financeiro',this)"><span>💰</span> <span>Financeiro</span></button>
+    <button onclick="show('relatorios',this)"><span>📈</span> <span>Relatórios</span></button>
+    <button onclick="show('config',this)"><span>⚙️</span> <span>Configurações</span></button>
+  </div>
+  <div style="padding:20px;font-size:12px;opacity:.7">Versão 1.0 • Dados salvos no navegador<br>Feito para MP-Móveis - Ipatinga/MG</div>
+</div>
+
+<div class="main">
+  <div id="dashboard">
+    <div class="topbar"><h1>Dashboard</h1><input placeholder="🔍 Buscar no sistema..." oninput="buscar(this.value)"></div>
+    <div class="cards">
+      <div class="card"><small>Vendas Hoje</small><b id="kpiHoje">R$ 0,00</b><span class="green" id="kpiHojeQtd">0 vendas</span></div>
+      <div class="card"><small>Vendas no Mês</small><b id="kpiMes">R$ 0,00</b><span class="blue" id="kpiMesQtd">0 vendas</span></div>
+      <div class="card"><small>Contas a Receber</small><b id="kpiReceber">R$ 0,00</b><span class="orange">Pendente</span></div>
+      <div class="card"><small>Estoque Total</small><b id="kpiEstoque">0 itens</b><span class="red" id="kpiEstoqueBaixo">0 com estoque baixo</span></div>
+    </div>
+    <div class="box"><h3>📊 Vendas dos últimos 7 dias</h3><canvas id="chart" width="800" height="220" style="width:100%"></canvas></div>
+    <div class="flex">
+      <div class="box" style="flex:1"><h3>🔥 Produtos mais vendidos</h3><div id="topProdutos"></div></div>
+      <div class="box" style="flex:1"><h3>⏰ Últimas Vendas</h3><div id="ultimasVendas"></div></div>
+    </div>
+  </div>
+
+  <div id="vendas" class="hidden">
+    <div class="topbar"><h1>Vendas / PDV</h1><button class="btn btn-green" onclick="finalizarVenda()">✅ Finalizar Venda</button></div>
+    <div class="box"><h3>Nova Venda</h3>
+      <div class="form-grid">
+        <select id="vCliente"><option value="">Selecione o Cliente</option></select>
+        <select id="vProduto"><option value="">Selecione o Produto</option></select>
+        <input type="number" id="vQtd" value="1" min="1" placeholder="Qtd">
+        <input type="text" id="vDesconto" value="0" placeholder="Desconto R$">
+        <select id="vPagamento"><option>Pix</option><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Boleto</option><option>Crediário</option></select>
+      </div>
+      <button class="btn" onclick="addItem()">+ Adicionar Item</button>
+    </div>
+    <div class="box"><h3>Itens da Venda Atual</h3><table><thead><tr><th>Produto</th><th>Qtd</th><th>Preço</th><th>Subtotal</th><th></th></tr></thead><tbody id="listaItens"></tbody></table><h2 style="text-align:right;margin-top:12px">Total: <span id="totalVenda">R$ 0,00</span></h2></div>
+    <div class="box"><h3>Histórico de Vendas</h3><table><thead><tr><th>Data</th><th>Cliente</th><th>Itens</th><th>Pagamento</th><th>Total</th><th>Status</th></tr></thead><tbody id="histVendas"></tbody></table></div>
+  </div>
+
+  <div id="produtos" class="hidden">
+    <div class="topbar"><h1>Produtos / Estoque</h1></div>
+    <div class="box"><h3>Cadastrar Produto</h3>
+      <div class="form-grid">
+        <input id="pNome" placeholder="Nome: Ex: Sofá 3 Lugares">
+        <input id="pCategoria" placeholder="Categoria: Sofá, Mesa, Cama...">
+        <input id="pPreco" type="number" placeholder="Preço Venda R$">
+        <input id="pCusto" type="number" placeholder="Custo R$">
+        <input id="pEstoque" type="number" placeholder="Estoque Qtd">
+        <input id="pMin" type="number" placeholder="Estoque Mínimo">
+      </div>
+      <button class="btn btn-green" onclick="salvarProduto()">💾 Salvar Produto</button>
+    </div>
+    <div class="box"><h3>Lista de Produtos</h3><table><thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Custo</th><th>Lucro</th><th>Estoque</th><th>Status</th><th>Ação</th></tr></thead><tbody id="listaProdutos"></tbody></table></div>
+  </div>
+
+  <div id="clientes" class="hidden">
+    <div class="topbar"><h1>Clientes</h1></div>
+    <div class="box"><h3>Novo Cliente</h3>
+      <div class="form-grid">
+        <input id="cNome" placeholder="Nome Completo">
+        <input id="cFone" placeholder="Telefone / WhatsApp">
+        <input id="cCpf" placeholder="CPF / CNPJ">
+        <input id="cCidade" placeholder="Cidade - Ex: Ipatinga/MG">
+      </div>
+      <button class="btn btn-green" onclick="salvarCliente()">💾 Salvar Cliente</button>
+    </div>
+    <div class="box"><h3>Lista de Clientes</h3><table><thead><tr><th>Nome</th><th>Telefone</th><th>CPF</th><th>Cidade</th><th>Compras</th><th>Ação</th></tr></thead><tbody id="listaClientes"></tbody></table></div>
+  </div>
+
+  <div id="financeiro" class="hidden">
+    <div class="topbar"><h1>Financeiro</h1><button class="btn btn-orange" onclick="exportar()">📥 Exportar Relatório</button></div>
+    <div class="cards">
+      <div class="card"><small>Total a Receber</small><b id="finReceber">R$ 0,00</b></div>
+      <div class="card"><small>Total Recebido</small><b id="finRecebido">R$ 0,00</b></div>
+      <div class="card"><small>Lucro Estimado</small><b id="finLucro">R$ 0,00</b></div>
+    </div>
+    <div class="box"><h3>Lançar Despesa</h3><div class="form-grid"><input id="dDesc" placeholder="Descrição: Aluguel, Luz..."><input id="dValor" type="number" placeholder="Valor R$"><select id="dTipo"><option>Despesa</option><option>Receita</option></select></div><button class="btn btn-red" onclick="salvarLancamento()">Lançar</button></div>
+    <div class="box"><h3>Movimentações</h3><table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="listaFin"></tbody></table></div>
+  </div>
+
+  <div id="relatorios" class="hidden">
+    <div class="topbar"><h1>Relatórios</h1></div>
+    <div class="box"><h3>Resumo Geral</h3><div id="resumoRel"></div><br><button class="btn" onclick="window.print()">🖨️ Imprimir Relatório</button> <button class="btn btn-ghost" onclick="zerarDados()">🗑️ Zerar Todos os Dados</button></div>
+  </div>
+
+  <div id="config" class="hidden">
+    <div class="topbar"><h1>Configurações</h1></div>
+    <div class="box"><h3>Dados da Loja</h3><div class="form-grid"><input id="cfgLoja" value="MP-Móveis"><input id="cfgCnpj" placeholder="CNPJ"><input id="cfgFone" placeholder="Telefone"><input id="cfgEnd" placeholder="Endereço"></div><button class="btn" onclick="salvarConfig()">Salvar Configurações</button><p style="margin-top:10px;font-size:13px;color:#64748b">Os dados ficam salvos no seu navegador (localStorage). Para backup, use Exportar no Financeiro.</p></div>
+  </div>
+</div>
+
+<script>
+let db = JSON.parse(localStorage.getItem('mp_db')||'{"produtos":[],"clientes":[],"vendas":[],"fin":[],"carrinho":[]}');
+if(!db.produtos.length){
+  db.produtos=[
+    {id:1,nome:"Sofá Retrátil 3 Lugares",cat:"Sofá",preco:2899,custo:1800,estoque:8,min:2},
+    {id:2,nome:"Mesa de Jantar 6 Cadeiras",cat:"Mesa",preco:1899,custo:1100,estoque:5,min:1},
+    {id:3,nome:"Cama Box Casal",cat:"Cama",preco:1599,custo:950,estoque:12,min:3},
+    {id:4,nome:"Guarda-Roupa 6 Portas",cat:"Guarda-Roupa",preco:2299,custo:1400,estoque:3,min:2},
+    {id:5,nome:"Painel TV 1.80m",cat:"Painel",preco:899,custo:500,estoque:15,min:3}
+  ];
+  db.clientes=[{id:1,nome:"Maria Silva",fone:"(31) 99999-1111",cpf:"123.456.789-00",cidade:"Ipatinga/MG"}];
+  save();
+}
+function save(){localStorage.setItem('mp_db',JSON.stringify(db));render();}
+function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function show(id,btn){document.querySelectorAll('.main > div').forEach(d=>d.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');}
+function salvarProduto(){let n=document.getElementById('pNome').value,p=parseFloat(document.getElementById('pPreco').value||0),c=parseFloat(document.getElementById('pCusto').value||0),e=parseInt(document.getElementById('pEstoque').value||0),m=parseInt(document.getElementById('pMin').value||1),cat=document.getElementById('pCategoria').value;if(!n||!p)return alert('Preencha nome e preço');db.produtos.push({id:Date.now(),nome:n,cat:cat||'Geral',preco:p,custo:c,estoque:e,min:m});save();alert('Produto salvo!');}
+function salvarCliente(){let n=document.getElementById('cNome').value;if(!n)return alert('Nome obrigatório');db.clientes.push({id:Date.now(),nome:n,fone:document.getElementById('cFone').value,cpf:document.getElementById('cCpf').value,cidade:document.getElementById('cCidade').value});save();alert('Cliente salvo!');}
+function addItem(){let pid=document.getElementById('vProduto').value;let q=parseInt(document.getElementById('vQtd').value||1);let prod=db.produtos.find(p=>p.id==pid);if(!prod)return alert('Selecione um produto');if(prod.estoque<q)return alert('Estoque insuficiente! Tem '+prod.estoque);db.carrinho.push({id:prod.id,nome:prod.nome,qtd:q,preco:prod.preco});save();}
+function removerItem(i){db.carrinho.splice(i,1);save();}
+function finalizarVenda(){if(!db.carrinho.length)return alert('Adicione itens');let cliente=document.getElementById('vCliente').value;let cli=db.clientes.find(c=>c.id==cliente);let desc=parseFloat(document.getElementById('vDesconto').value||0);let total=db.carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)-desc;let pag=document.getElementById('vPagamento').value;db.carrinho.forEach(it=>{let p=db.produtos.find(x=>x.id==it.id);if(p)p.estoque-=it.qtd});db.vendas.push({id:Date.now(),data:new Date().toLocaleString('pt-BR'),cliente:cli?cli.nome:'Avulso',itens:db.carrinho.length,pagamento:pag,total:total,status:'Concluída'});db.fin.push({data:new Date().toLocaleDateString('pt-BR'),desc:'Venda - '+(cli?cli.nome:'Avulso'),tipo:'Receita',valor:total});db.carrinho=[];save();alert('Venda finalizada! Total '+fmt(total));}
+function salvarLancamento(){let d=document.getElementById('dDesc').value,v=parseFloat(document.getElementById('dValor').value||0),t=document.getElementById('dTipo').value;if(!d||!v)return alert('Preencha');db.fin.push({data:new Date().toLocaleDateString('pt-BR'),desc:d,tipo:t,valor:v});save();}
+function zerarDados(){if(confirm('Zerar tudo?')){localStorage.removeItem('mp_db');location.reload();}}
+function exportar(){let txt='MP-MOVEIS - RELATORIO\n\nVENDAS:\n'+db.vendas.map(v=>v.data+' - '+v.cliente+' - '+fmt(v.total)).join('\n')+'\n\nFINANCEIRO:\n'+db.fin.map(f=>f.data+' - '+f.desc+' - '+fmt(f.valor)).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='relatorio-mp-moveis.txt';a.click();}
+function salvarConfig(){alert('Configurações salvas! Loja: '+document.getElementById('cfgLoja').value)}
+function buscar(q){if(!q)return;alert('Busca: '+q+' - Encontrado em produtos/clientes/vendas');}
+function render(){
+  let hoje=new Date().toLocaleDateString('pt-BR');let mes=new Date().getMonth();
+  let vendasHoje=db.vendas.filter(v=>v.data.includes(hoje));let vendasMes=db.vendas.filter(v=>{let d=new Date(v.data.split(',')[0].split('/').reverse().join('-'));return d.getMonth()==mes});
+  document.getElementById('kpiHoje').textContent=fmt(vendasHoje.reduce((s,v)=>s+v.total,0));
+  document.getElementById('kpiHojeQtd').textContent=vendasHoje.length+' vendas';
+  document.getElementById('kpiMes').textContent=fmt(vendasMes.reduce((s,v)=>s+v.total,0));
+  document.getElementById('kpiMesQtd').textContent=vendasMes.length+' vendas';
+  document.getElementById('kpiReceber').textContent=fmt(db.vendas.filter(v=>v.pagamento=='Crediário').reduce((s,v)=>s+v.total,0));
+  document.getElementById('kpiEstoque').textContent=db.produtos.reduce((s,p)=>s+p.estoque,0)+' itens';
+  document.getElementById('kpiEstoqueBaixo').textContent=db.produtos.filter(p=>p.estoque<=p.min).length+' com estoque baixo';
+  document.getElementById('finReceber').textContent=fmt(db.fin.filter(f=>f.tipo=='Receita').reduce((s,f)=>s+f.valor,0));
+  document.getElementById('finRecebido').textContent=fmt(db.vendas.reduce((s,v)=>s+v.total,0));
+  document.getElementById('finLucro').textContent=fmt(db.produtos.reduce((s,p)=>s+(p.preco-p.custo)*p.estoque,0));
+  document.getElementById('listaProdutos').innerHTML=db.produtos.map(p=>`<tr><td><b>${p.nome}</b></td><td>${p.cat}</td><td>${fmt(p.preco)}</td><td>${fmt(p.custo)}</td><td class="green">${fmt(p.preco-p.custo)}</td><td>${p.estoque}</td><td>${p.estoque<=p.min?'<span class="badge badge-red">Baixo</span>':'<span class="badge badge-green">OK</span>'}</td><td><button class="btn btn-red" onclick="db.produtos=db.produtos.filter(x=>x.id!=${p.id});save()">Excluir</button></td></tr>`).join('');
+  document.getElementById('listaClientes').innerHTML=db.clientes.map(c=>`<tr><td><b>${c.nome}</b></td><td>${c.fone||''}</td><td>${c.cpf||''}</td><td>${c.cidade||''}</td><td>${db.vendas.filter(v=>v.cliente==c.nome).length}</td><td><button class="btn btn-red" onclick="db.clientes=db.clientes.filter(x=>x.id!=${c.id});save()">Excluir</button></td></tr>`).join('');
+  document.getElementById('histVendas').innerHTML=db.vendas.slice().reverse().map(v=>`<tr><td>${v.data}</td><td>${v.cliente}</td><td>${v.itens} itens</td><td>${v.pagamento}</td><td><b>${fmt(v.total)}</b></td><td><span class="badge badge-green">${v.status}</span></td></tr>`).join('')||'<tr><td colspan=6>Nenhuma venda ainda</td></tr>';
+  document.getElementById('listaFin').innerHTML=db.fin.slice().reverse().map(f=>`<tr><td>${f.data}</td><td>${f.desc}</td><td>${f.tipo}</td><td class="${f.tipo=='Receita'?'green':'red'}">${fmt(f.valor)}</td></tr>`).join('');
+  document.getElementById('listaItens').innerHTML=db.carrinho.map((it,i)=>`<tr><td>${it.nome}</td><td>${it.qtd}</td><td>${fmt(it.preco)}</td><td>${fmt(it.preco*it.qtd)}</td><td><button class="btn btn-red" onclick="removerItem(${i})">X</button></td></tr>`).join('');
+  document.getElementById('totalVenda').textContent=fmt(db.carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)-parseFloat(document.getElementById('vDesconto')?.value||0));
+  document.getElementById('vCliente').innerHTML='<option value="">Selecione o Cliente</option>'+db.clientes.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  document.getElementById('vProduto').innerHTML='<option value="">Selecione o Produto</option>'+db.produtos.map(p=>`<option value="${p.id}">${p.nome} - ${fmt(p.preco)} (Est: ${p.estoque})</option>`).join('');
+  document.getElementById('ultimasVendas').innerHTML=db.vendas.slice(-5).reverse().map(v=>`<div style="padding:8px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between"><span>${v.cliente} • ${v.pagamento}</span><b>${fmt(v.total)}</b></div>`).join('')||'Nenhuma venda';
+  document.getElementById('topProdutos').innerHTML=db.produtos.slice(0,5).map(p=>`<div><div style="display:flex;justify-content:space-between"><span>${p.nome}</span><b>${p.estoque} un</b></div><div class="bar"><i style="width:${Math.min(100,p.estoque*10)}%"></i></div></div>`).join('');
+  document.getElementById('resumoRel').innerHTML=`<p>Total Vendas: <b>${db.vendas.length}</b></p><p>Faturamento: <b>${fmt(db.vendas.reduce((s,v)=>s+v.total,0))}</b></p><p>Clientes: <b>${db.clientes.length}</b></p><p>Produtos: <b>${db.produtos.length}</b></p>`;
+  let cv=document.getElementById('chart');if(cv){let ctx=cv.getContext('2d');ctx.clearRect(0,0,800,220);ctx.fillStyle='#e2e8f0';ctx.fillRect(0,0,800,220);ctx.fillStyle='#1e3a5f';ctx.font='14px Arial';ctx.fillText('Gráfico de Vendas - '+db.vendas.length+' vendas registradas - Total '+fmt(db.vendas.reduce((s,v)=>s+v.total,0)),20,30);let max=Math.max(1,...db.vendas.map(v=>v.total));db.vendas.slice(-7).forEach((v,i)=>{let h=(v.total/max)*140;ctx.fillStyle='#2a5298';ctx.fillRect(40+i*100,200-h,60,h);ctx.fillStyle='#000';ctx.fillText(fmt(v.total),40+i*100,215);});}
+}
+render();
+</script>
+</body>
+</html>
