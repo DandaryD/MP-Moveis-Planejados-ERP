@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/DandaryD/MP-Moveis-Planejados-ERP#readme",
   "devDependencies": {
+    "@electron/rebuild": "^4.2.1",
     "electron": "^45.3.0",
     "electron-builder": "^26.18.0"
   },
@@ -33,7 +34,8 @@
     "files": [
       "main.js",
       "preload.js",
-      "src/**/*"
+      "src/**/*",
+      "database/**/*"
     ],
     "win": {
       "target": "nsis"
@@ -44,5 +46,8 @@
       "oneClick:": "false",
       "allowToChangeInstallationDirectory:": "true"
     }
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.2.0"
   }
 }
